@@ -1,56 +1,41 @@
+% this is the main script where the 4D low data can be extracted from the previously-drawn ROIs
+
 clear; close all;
 % clear classes
 
 setFlowParameters_4Dv2D_AM; %run the set parameters matlab file
 load('allFlowOptions');
-load([procRoot '4Dv2Danalysis/scanInfo.mat']); %load in the scan info matlab file from wherever you put it
-
+load(% load scanInfo.mat from where it is); 
 
 spm('defaults', 'FMRI'); spm_jobman('initcfg');
 
-% addpath([procRoot '2Danalysis']) %point to where other matlab files are for processing
 
-for iSubject=[11]
-    
-    
-%% Comment/uncomment this section to use region-growing algorithm to draw masks
-%     for iFlowScan=14 %  1.RMCA 2.LMCA 3.RACA 4.LACA 5.RPCA 6.LPCA 7.SSS 8.StS 9.RTS 10.LTS 11.RICA 12.LICA 13.BA
-% %         regionGrowingFunction(iSubject,iFlowScan,0.6,0.4)     %iSubject, iFlowScan, lumen_threshold (higher), wall_threshold (lower)
-% %         regionGrowingFunction_PROTOTYPE(iSubject,iFlowScan)   
-%             regionGrowingFunction_INTERPOLATED(iSubject,iFlowScan)
-%     end
-    
 
-%This section uses the ROI and BG masks to extract flow using different methods
-    for iFlowScan=[9:10] %  1.RMCA 2.LMCA 3.RACA 4.LACA 5.RPCA 6.LPCA 7.SSS 8.StS 9.RTS 10.LTS 11.RICA 12.LICA 13.BA
-%                      
-            opts=allOpts{iSubject,iFlowScan}; %load options
-            if isempty(opts); continue; end
-            
-            disp(['Processing subject ' opts.HVNumberStr ', ' opts.maskNames]);
-%      
-            pipeline_extractFlowBasic_4Dv2D(opts,iSubject,iFlowScan); % calculates flow by combining velocity components within each mask pixel
-            pipeline_extractFlowDotProduct_4Dv2D(opts,iSubject,iFlowScan); % uses dot product of vector along vessel and velocity vector
-%             pipeline_extractFlowPVC_4Dv2D(opts,iSubject,iFlowScan); % same as above but uses Buillot's PVC algorithm to calculate flow
-
+for iSubject=[1]
+    for iSes = 1
+       
         
+        %This section uses the ROI and BG masks to extract flow using different methods
+        for iFlowScan=1%[1:6,11:13] % 1.RMCA 2.LMCA 3.RACA 4.LACA 5.RPCA 6.LPCA 7.SSS 8.StS 9.RTS 10.LTS 11.RICA 12.LICA 13.BA
             
-% %    comment/uncomment this code to compare the three flow extraction methods above
-%     
-% %            methodComparisonPlot_function(opts);
+            opts=allOpts{iSubject,iSes,iFlowScan}; %load options
+            if isempty(opts); disp('error: opts is empty'); continue; end
 
-%             
+            disp(['Processing subject ' opts.HVNumberStr ', visit ' num2str(iSes) ', '  opts.maskNames]);
+%             %
+                % FLOW EXTRACTION OF HAND-DRAWN MASKS
+             pipeline_extractFlowDotProduct_4Dv2D(opts,iSubject,iSes,iFlowScan); % uses dot product of vector along vessel and velocity vector
+
+        end
+        
+        %     %% this section is for tidying up and plotting the flow/pulsatility results
+        %   uncomment when you want to run the final phase of processing which tidies up the data into nicer graphs and saves the flow/pulsatility variables into a spreadsheet
+        % NOTE, best to run this for all subjects in a separate loop once all the flow extraction has been completed
+        
+%             pipeline_finalFlowCalculationsDotProduct(iSubject,iSes); % for dot product flow with accurate pixel areas
+
+
+
     end
-
-%     %% this section is for tidying up and plotting the flow/pulsatility results
-%     
-%     pipeline_finalFlowCalculationsBasic(iSubject); % for sum of square velocity flow with accurate pixel areas
-%     pipeline_finalFlowCalculationsDotProduct(iSubject); % for dot product flow with accurate pixel areas
-%     pipeline_finalFlowCalculationsPVC(iSubject); % for partial volume corrected flow with accurate pixel areas
-%     
-%     %% noise quantification
-%     opts=allOpts{iSubject};
-%     noise_quantification_v2(opts,iSubject);
-    
     
 end
