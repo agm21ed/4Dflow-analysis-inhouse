@@ -5,12 +5,12 @@ Code for slicing 4D flow data with a 2D plane and extracting flow information fr
 
 This file also extracts header information from the first image of each set of velocity data in the study folder. This includes venc, nominal interval (RR interval) and time resolution - for later use.
 
-2) Use FSLeyes volume viewer
+2) Use FSLeyes volume viewer to find centrepoint coordinates for vessel locations of interest, and distal coordinates along the length of the vessel, enter these into a spreadsheet (i.e. 3 columns for centrepoint x,y,z, 3 columns for distal x,y,x, then repeat for all vessels)
 
-2) process_4Dv2D.m is the code used to extract a slice of interest from the 4D slab of data. At the moment, the slice needs a name inputting (e.g. 'ACAs'), radius (which seems to work consistently at 150), and the slice centrepoint coordinates and normal vector stored in the vesselcoords+normal excel file.
+3) Use extractSlice_4Dv2D_v3.m to extract all the 2D slices from the subject's 4D volume, for however many vessels are of interest. A radius of 150 worked for me but this may need changing
 
-With this information, the code loads in the slab of data (first velocity 1,2,3, then mag) and uses the extractSlice function (CITE) to extract the relavent slice based on the coordinates and normal, this is then saved for each timeframe for each velocity direction/mag.
+4) Draw the masks/ROIs on all 2D images, save these and use move_masks.m to move the masks to the ROIs folder
 
-The slice across all TFs is saved as a merged nifti and derived images are created for mask drawing later (MeanAbs, Mean, Max and MaxAbs for all 3 velocity directions; Mean and Max for magnitude)
+5) processFlowData_4Dv2D_AM.m is a script that runs setFlowParameters_4Dv2D_AM.m and then carries out pipeline_extractFlow_4Dv2D_AM to produce flow graphs for each vessel in the slice, for each velocity direction. Dot product calculation is used to take the velocities of a pixel in all 3 directions and calculate the velocity along the vessel length/vector
 
-3) processFlowData_4Dv2D_AM.m is a script that runs setFlowParameters_4Dv2D_AM.m and then carries out pipeline_extractFlow_4Dv2D_AM to produce flow graphs for each vessel in the slice, for each velocity direction
+6) Coment the extractFlow line and uncomment the pipeline_finalFlowCalculations line to produce flow waveforms and flow/pulsatility variables (in a spreadsheet) for the subjects of interest
