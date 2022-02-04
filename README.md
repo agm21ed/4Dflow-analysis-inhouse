@@ -1,9 +1,11 @@
 # 4Dv2D-Flow-Analysis
 Code for slicing 4D flow data with a 2D plane and extracting flow information from this slice
 
-1) moveFlowImages_4Dv2D.m takes the subject DICOMs from the study folder, and moves them to my own folder - amorganPhD. It keeps the 4D data separated into Magnitude, Velocity (Foot-head), Velocity (Anterior-posterior), and Velocity (Left-right) for that subject, while separating the images within these folders into individual timeframes. i.e. every brain slice for TF1, TF2 and so on. These DICOMs are then converted into a nifti slab within each TF folder.
+1) moveFlowImages_4Dv2D.m takes the subject DICOMs from the study folder, and moves them to your own research folder. It keeps the 4D data separated into Magnitude, Velocity (Foot-head), Velocity (Anterior-posterior), and Velocity (Left-right) for that subject, while separating the images within these folders into individual timeframes. i.e. every brain slice for TF1, TF2 and so on. These DICOMs are then converted into a nifti slab within each TF folder.
 
 This file also extracts header information from the first image of each set of velocity data in the study folder. This includes venc, nominal interval (RR interval) and time resolution - for later use.
+
+2) Use FSLeyes volume viewer
 
 2) process_4Dv2D.m is the code used to extract a slice of interest from the 4D slab of data. At the moment, the slice needs a name inputting (e.g. 'ACAs'), radius (which seems to work consistently at 150), and the slice centrepoint coordinates and normal vector stored in the vesselcoords+normal excel file.
 
